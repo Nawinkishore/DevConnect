@@ -3,14 +3,29 @@ import { Routes, Route } from 'react-router-dom'
 import SideContent from './components/auth/SideContent'
 import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
+import {ToastContainer} from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
+import { toast }  from 'react-toastify'
+import api from './api/api'
+import Dashboard from './pages/dashboard/Dashboard'
 const App = () => {
-  useEffect(() => {
-    // Check for token expiration and refresh if necessary
-  }, [])
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const response = await api.get('/auth/refresh');
+  //       toast.success('Token refreshed successfully');
+  //     } catch (error) {
+  //       toast.error('Error refreshing token');
+  //     }
+  //   };
+
+  //   checkAuth();
+  // }, [])
 
   return (
     <div>
+      <ToastContainer position='top-right' autoClose={3000} />
       <Routes>
       <Route
         path="/auth/sign-in"
@@ -28,7 +43,12 @@ const App = () => {
           </SideContent>
         }
       />
+      <Route
+        path="/dashboard"
+        element={<Dashboard />}
+      />
     </Routes>
+    
     
     </div>
     

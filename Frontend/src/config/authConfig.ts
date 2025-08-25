@@ -4,35 +4,16 @@ export type FieldConfig = {
     label: string;
     type: string;
     placeholder?: string;
+    required?: boolean;
 };
 
 export const signInConfig: FieldConfig[] = [
-    { name: "email", label: "Email", type: "email", placeholder: "Enter email" },
-    { name: "password", label: "Password", type: "password", placeholder: "Enter password" },
+    { name: "email", label: "Email", type: "email", placeholder: "Enter email", required: true },
+    { name: "password", label: "Password", type: "password", placeholder: "Enter password", required: true },
 ];
-export const signUpConfig: FieldConfig[] = [
-    {
-        name: "fullName",
-        label: "Full Name",
-        type: "text",
-        placeholder: "Enter your full name",
-    },
-    {
-        name: "email",
-        label: "Email",
-        type: "email",
-        placeholder: "Enter your email",
-    },
-    {
-        name: "password",
-        label: "Password",
-        type: "password",
-        placeholder: "Enter your password",
-    },
-    {
-        name: "confirmPassword",
-        label: "Confirm Password",
-        type: "password",
-        placeholder: "Re-enter your password",
-    },
+export const signUpConfig:FieldConfig[] = [
+  { name: "fullname", label: "Full Name", type: "text", required: true },
+  { name: "email", label: "Email", type: "email", required: true },
+  { name: "password", label: "Password", type: "password", required: true },
+  { name: "confirmPassword", label: "Confirm Password", type: "password", required: true },
 ];

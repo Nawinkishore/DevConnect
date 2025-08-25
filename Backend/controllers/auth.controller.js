@@ -65,7 +65,7 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     const access_token = jwt.sign(
-      { email: email },
+      { email: email, id: user._id },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "30s" }
     );
@@ -80,17 +80,20 @@ export const loginUser = async (req, res) => {
 
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
-    res.json({ access_token });
+    res.json({
+      user: { id: user._id, email: user.email },
+      accessToken: access_token,
+      refreshToken: refresh_token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 export const logoutUser = async (req, res) => {
   const cookie = req.cookies.refresh_token;

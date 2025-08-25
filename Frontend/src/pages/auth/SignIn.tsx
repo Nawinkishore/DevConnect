@@ -4,11 +4,25 @@ import React from "react";
 import DynamicForm from "../../components/form/DynamiceForm";
 import { signInConfig } from "../../config/authConfig";
 import { Link } from "react-router-dom";
+import { login } from "../../store/auth/authSlice"; 
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const SignIn: React.FC = () => {
-
-    const handleSignIn = (data: Record<string, string>) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const handleSignIn = async (data: Record<string, string>) => {
         console.log("Sign In Data:", data);
 
+        const response = await dispatch(login(data as any) as any);
+        console.log();
+        if (response.meta.requestStatus === "fulfilled") {
+            toast.success("Login successful");
+            navigate("/dashboard");
+        }
+        else {
+            toast.error(response.payload);
+        }
     };
 
     return (

@@ -2,23 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
 
-// REGISTER
-export const register = createAsyncThunk(
-  "auth/register",
-  async (credentials ,{ rejectWithValue }) => {
-    try {
-      const response = await api.post("/auth/register", credentials);
-      return response.data;
-    } catch (error: any) {
-      // Handle errors safely
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
-      }
-      return rejectWithValue(error.message || "Something went wrong");
-    }
-  }
-);
-
 // LOGIN
 export const login = createAsyncThunk(
   "auth/login",
@@ -28,7 +11,7 @@ export const login = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data.message || "Login failed");
       }
       return rejectWithValue(error.message || "Something went wrong");
     }
@@ -40,40 +23,33 @@ const initialState = {
   accessToken: null,
   refreshToken: null,
   isLoading: false,
-  error: null,
+  error: null as string | null,
 };
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
-    // REGISTER
-    builder.addCase(register.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(register.fulfilled, (state, action) => {
-      // If backend returns only message, handle gracefully
-      state.user = action.payload.user || null;
-      state.accessToken = action.payload.accessToken || null;
-      state.refreshToken = action.payload.refreshToken || null;
-      state.isLoading = false;
-      state.error = action.payload.message || null;
-    });
-    builder.addCase(register.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    });
 
     // LOGIN
     builder.addCase(login.pending, (state) => {
       state.isLoading = true;
+      state.error = null;
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.user = action.payload.user || null;
       state.accessToken = action.payload.accessToken || null;
       state.refreshToken = action.payload.refreshToken || null;
       state.isLoading = false;
-      state.error = action.payload.message || null;
+      state.error = null; 
     });
     builder.addCase(login.rejected, (state, action) => {
       state.isLoading = false;
@@ -82,4 +58,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

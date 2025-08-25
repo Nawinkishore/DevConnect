@@ -1,14 +1,24 @@
 // src/SignIn.tsx
 
 import React from "react";
+import api from "../../api/api";
 import DynamicForm from "../../components/form/DynamiceForm";
 import { signUpConfig } from "../../config/authConfig";
 import { Link } from "react-router-dom";
+import {toast} from 'react-toastify'
+import { useNavigate } from "react-router-dom";
 const SignUp: React.FC = () => {
-
+    const navigate = useNavigate();
     const handleSignIn = (data: Record<string, string>) => {
         console.log("Sign Up Data:", data);
-
+        api.post("/auth/register", data)
+            .then((response) => {
+                toast.success(response.data.message || "Registration successful");
+                navigate("/auth/sign-in");
+            })
+            .catch((error) => {
+                toast.error(error.response?.data.message || "Registration failed");
+            });
     };
 
     return (

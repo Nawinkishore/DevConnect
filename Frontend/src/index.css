@@ -2,8 +2,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
-
 body {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }

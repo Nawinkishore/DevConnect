@@ -3,25 +3,13 @@ import { Routes, Route } from 'react-router-dom'
 import SideContent from './components/auth/SideContent'
 import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
-// import { useEffect } from 'react'
+import Dashboard from './pages/pages/Dashboard'
+
 import {ToastContainer} from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
-import { toast }  from 'react-toastify'
-import api from './api/api'
-import Dashboard from './pages/dashboard/Dashboard'
+import Main from './pages/main/main'
 const App = () => {
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     try {
-  //       const response = await api.get('/auth/refresh');
-  //       toast.success('Token refreshed successfully');
-  //     } catch (error) {
-  //       toast.error('Error refreshing token');
-  //     }
-  //   };
 
-  //   checkAuth();
-  // }, [])
 
   return (
     <div>
@@ -43,10 +31,10 @@ const App = () => {
           </SideContent>
         }
       />
-      <Route
-        path="/dashboard"
-        element={<Dashboard />}
-      />
+      <Route path="/" element={<Main />}>
+        <Route path="dashboard" element={<Dashboard />} />
+        {/* Add more child pages here */}
+      </Route>
     </Routes>
     
     

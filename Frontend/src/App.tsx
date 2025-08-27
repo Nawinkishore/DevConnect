@@ -8,6 +8,7 @@ import Dashboard from './pages/pages/Dashboard'
 import {ToastContainer} from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import Main from './pages/main/main'
+import Profile from './pages/pages/Profile'
 const App = () => {
 
 
@@ -33,6 +34,7 @@ const App = () => {
       />
       <Route path="/" element={<Main />}>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<Profile/>} />
         {/* Add more child pages here */}
       </Route>
     </Routes>

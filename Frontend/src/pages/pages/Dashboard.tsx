@@ -1,9 +1,13 @@
 import React from 'react'
-
+import Sidebar from '../../components/DesignContents/Sidebar'
 const Dashboard = () => {
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className='bg-[#f4f2ee] flex  justify-between p-6'>
+      <Sidebar />
+      <main>
+        <h1>Dashboard</h1>
+      </main>
+      <Sidebar />
     </div>
   )
 }

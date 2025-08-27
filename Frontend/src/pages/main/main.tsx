@@ -1,17 +1,14 @@
-import React from 'react'
-import AppSidebar from '../../components/DesignContents/Sidebar'
-import { SidebarProvider } from '../../components/ui/sidebar'
+
 import { Outlet } from 'react-router-dom'
 import Navbar from '../../components/DesignContents/Navbar'
 const main = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main>
-        <Navbar/>
+    <div className='fixed top-0 left-0 right-0 z-10'>
+      <Navbar  />
+      <main className='h-screen'>
         <Outlet />
       </main>
-    </SidebarProvider>
+    </div>
   )
 }
 

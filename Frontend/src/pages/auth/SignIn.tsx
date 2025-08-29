@@ -18,7 +18,7 @@ const SignIn: React.FC = () => {
         console.log();
         if (response.meta.requestStatus === "fulfilled") {
             toast.success("Login successful");
-            navigate("/dashboard");
+            navigate("/");
         }
         else {
             toast.error(response.payload);

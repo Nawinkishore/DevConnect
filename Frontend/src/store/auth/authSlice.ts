@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
-
 // LOGIN
 export const login = createAsyncThunk(
   "auth/login",
@@ -18,13 +17,19 @@ export const login = createAsyncThunk(
   }
 );
 
-const initialState = {
-  user: null,
-  accessToken: null,
-  refreshToken: null,
-  isLoading: false,
-  error: null as string | null,
-};
+// Load state from localStorage if available
+const savedAuth = localStorage.getItem("auth");
+
+const initialState = savedAuth
+  ? JSON.parse(savedAuth)
+  : {
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+      isLoading: false,
+      error: null as string | null,
+      isAuthenticated: false, // ✅ always defined
+    };
 
 const authSlice = createSlice({
   name: "auth",
@@ -35,10 +40,17 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.error = null;
+      state.isAuthenticated = false; // ✅ reset
+      localStorage.removeItem("auth");
+    },
+    // ✅ New reducer for updating accessToken only
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload;
+      state.isAuthenticated = true;
+      localStorage.setItem("auth", JSON.stringify(state));
     },
   },
   extraReducers: (builder) => {
-
     // LOGIN
     builder.addCase(login.pending, (state) => {
       state.isLoading = true;
@@ -49,14 +61,17 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken || null;
       state.refreshToken = action.payload.refreshToken || null;
       state.isLoading = false;
-      state.error = null; 
+      state.error = null;
+      state.isAuthenticated = true; // ✅ set when login succeeds
+      localStorage.setItem("auth", JSON.stringify(state));
     });
     builder.addCase(login.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
+      state.isAuthenticated = false; // ✅ failed login
     });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;

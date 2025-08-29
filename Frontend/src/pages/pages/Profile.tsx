@@ -7,6 +7,7 @@
     import { Button } from "../../components/ui/button"
     import { Label } from "../../components/ui/label"
     import { useState } from "react"
+    import { useSelector } from "react-redux"
     import {
         Dialog,
         DialogContent,
@@ -15,6 +16,7 @@
         DialogTitle,
         DialogTrigger,
     } from "../../components/ui/dialog"
+
     const Profile = () => {
         const [formData, setFormData] = useState({
             bannerImage: "",
@@ -34,6 +36,8 @@
             e.preventDefault(); 
             console.log(formData);
         };
+        const user =  useSelector((state: any) => state.auth.user)
+        console.log(user);
         return (
             <section>
                 <div className='flex w-full p-6 h-screen '>

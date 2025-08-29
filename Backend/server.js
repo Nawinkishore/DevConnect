@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.js';
 import refresh from './routes/refresh.js';
 import verifyJWT from './middleware/verifyJWT.js';
-
+import profileRouter from './routes/profile.js';
 const app = express()
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -29,3 +29,5 @@ app.use(verifyJWT);
 
 // Other Api routes
 
+//Profile routes
+app.use('/api/profile',profileRouter)

@@ -2,7 +2,7 @@ import Profile from "../models/UserProfile.js";
 
 export const getProfileById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const id = req.user.id; // Assuming the JWT contains the user ID in the 'id' field
         const profile = await Profile.findOne({ userId: id });
         if (!profile) {
             return res.status(404).json({ message: "Profile not found" });
@@ -15,8 +15,10 @@ export const getProfileById = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { bannerImage, image, name, pronoun, skill, location, about, experience } = req.body;
+        const id = req.user.id; // Assuming the JWT contains the user ID in the 'id' field
+        const bannerImage = req.files?.bannerImage?.[0]?.path;
+        const image = req.files?.image?.[0]?.path;
+        const { name, pronoun, skill, location, about, experience } = req.body;
         const updatedProfile = await Profile.findOneAndUpdate({ userId: id }, {
             bannerImage,
             image,

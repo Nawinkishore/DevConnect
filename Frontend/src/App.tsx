@@ -39,7 +39,7 @@ const App = () => {
         />
         <Route path="/" element={<CheckAuth><Main /></CheckAuth>}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<Profile/>} />
+          <Route path="profile/:id" element={<Profile/>} />
         </Route>
       </Routes>
     </div>

@@ -2,7 +2,10 @@ import React from 'react'
 import { Input } from '../ui/input'
 import { Bell, House, Network, Send, UsersRound } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 const Navbar = () => {
+    const user = useSelector((state: any) => state.auth.user);
     return (
         <div className='h-16 bg-white border-b p-12 flex items-center justify-between '>
             <div className='flex items-center gap-2 '>
@@ -31,10 +34,12 @@ const Navbar = () => {
                     <span>Notifications</span>
                 </div>
             </div>
+            <Link to={`/profile/${user.id}`}>
             <Avatar  className='hover:cursor-pointer'>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
+            </Link>
         </div>
     )
 }

@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Profile from "../models/UserProfile.js";
 dotenv.config();
 
 export const registerUser = async (req, res) => {
@@ -41,6 +42,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = new User({ fullname, email, password: hashedPassword });
     await user.save();
+    await Profile.create({ userId: user._id, name: user.fullname });
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });

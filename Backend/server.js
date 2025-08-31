@@ -15,6 +15,7 @@ app.use(cors({
     methods:['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }))
+app.use('/uploads', express.static('uploads'));
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -25,9 +26,8 @@ app.listen(PORT, () => {
 });
 app.use('/api/auth',authRouter)
 app.use('/api/refresh',refresh)
-app.use(verifyJWT);
 
 // Other Api routes
 
 //Profile routes
-app.use('/api/profile',profileRouter)
+app.use('/api/profile',verifyJWT,profileRouter)

@@ -7,7 +7,8 @@ import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfile } from '../../store/profile/profilleSlice';
+import { updateProfile, getProfileById } from '../../store/profile/profilleSlice';
+import { backendUrl } from "../../api/api";
 import {
   Dialog,
   DialogContent,
@@ -16,67 +17,104 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
-import { getProfileById } from "../../store/profile/profilleSlice";
 import type { RootState, AppDispatch } from "../../store/store";
 
+const url = backendUrl; // Change if your backend URL differs
+
 const Profile = () => {
-  // Backend base URL for images
-  const backendUrl = "http://localhost:5000"; // Change to your backend URL if different
-  const dispatch = useDispatch<AppDispatch>()
-  const { id } = useParams<{ id: string }>()
-  const { profile, loading, error } = useSelector((state: RootState) => state.profile)
- 
+  // State to control dialog open/close
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
+  const { profile } = useSelector((state: RootState) => state.profile);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  // Initialize form state with profile data
+  const [formData, setFormData] = useState<{
+    bannerImage: File | null;
+    image: File | null;
+    name: string;
+    pronoun: string;
+    skill: string;
+    location: string;
+    about: string;
+    experience: string;
+  }>({
+    bannerImage: null,
+    image: null,
+    name: profile?.name || "",
+    pronoun: profile?.pronoun || "",
+    skill: profile?.skill || "",
+    location: profile?.location || "",
+    about: profile?.about || "",
+    experience: profile?.experience || ""
+  });
 
   useEffect(() => {
     if (id) {
-      dispatch(getProfileById())
+      dispatch(getProfileById());
     }
-  }, [id, dispatch])
+  }, [id, dispatch]);
 
-  const [formData, setFormData] = useState({
-  bannerImage: null,
-  image: null,
-  name: "",
-  pronoun: "",
-  skill: "",
-  location: "",
-  about: "",
-  experience: ""
-});
-
-
- const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value, type } = e.target;
-  if (type === "file" && e.target instanceof HTMLInputElement) {
-    const files = e.target.files;
+  // When profile data changes, update formData to keep fields in sync
+  useEffect(() => {
     setFormData({
-      ...formData,
-      [name]: files && files.length > 0 ? files[0] : null
+      bannerImage: null,
+      image: null,
+      name: profile?.name || "",
+      pronoun: profile?.pronoun || "",
+      skill: profile?.skill || "",
+      location: profile?.location || "",
+      about: profile?.about || "",
+      experience: profile?.experience || ""
     });
-  } else {
-    setFormData({ ...formData, [name]: value });
-  }
+  }, [profile]);
+
+  // Helper function to generate image URL safely
+  const getImageUrl = (imgPath?: string): string | undefined => {
+  if (!imgPath) return undefined;
+  return `${url}/uploads/${imgPath.replace(/\\/g, "/")}`;
 };
+
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, type, value } = e.target;
+    if (type === "file" && e.target instanceof HTMLInputElement) {
+      const file = e.target.files && e.target.files.length > 0 ? e.target.files[0] : null;
+      setFormData(prev => ({
+        ...prev,
+        [name]: file,
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
 
   const handleOnClick = (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  const fd = new FormData();
-  if (formData.bannerImage) fd.append("bannerImage", formData.bannerImage);
-  if (formData.image) fd.append("image", formData.image);
-  fd.append("name", formData.name);
-  fd.append("pronoun", formData.pronoun);
-  fd.append("skill", formData.skill);
-  fd.append("location", formData.location);
-  fd.append("about", formData.about);
-  fd.append("experience", formData.experience);
+    e.preventDefault();
 
-  dispatch(updateProfile(fd)); // Pass FormData, not object
-};
+    const fd = new FormData();
+    // Only append new files if selected
+    if (formData.bannerImage) {
+      fd.append("bannerImage", formData.bannerImage);
+    }
+    if (formData.image) {
+      fd.append("image", formData.image);
+    }
+    // Always send text fields, fallback to profile values if empty
+    fd.append("name", formData.name || profile?.name || "");
+    fd.append("pronoun", formData.pronoun || profile?.pronoun || "");
+    fd.append("skill", formData.skill || profile?.skill || "");
+    fd.append("location", formData.location || profile?.location || "");
+    fd.append("about", formData.about || profile?.about || "");
+    fd.append("experience", formData.experience || profile?.experience || "");
 
-
-  const user = useSelector((state: RootState) => state.auth.user)
-  console.log(user)
+  dispatch(updateProfile(fd));
+  setDialogOpen(false); // Close dialog after save
+  };
 
   return (
     <section>
@@ -84,22 +122,26 @@ const Profile = () => {
         <div className='w-9/12 h-max border rounded-3xl'>
           <div className="h-48 bg-black rounded-tr-3xl rounded-tl-2xl relative">
             {/* Banner Image */}
-            <img
-              src={profile?.bannerImage ? `${backendUrl}/uploads/${profile.bannerImage}` : undefined}
-              alt="Banner"
-              className="w-full h-48 object-cover rounded-tr-3xl rounded-tl-2xl"
-              style={{ position: "absolute", top: 0, left: 0, zIndex: 0 }}
-            />
+            {profile?.bannerImage && (
+              <img
+                src={getImageUrl(profile.bannerImage)}
+                alt="Banner"
+                className="w-full h-48 object-cover rounded-tr-3xl rounded-tl-2xl"
+                style={{ position: "absolute", top: 0, left: 0, zIndex: 0 }}
+              />
+            )}
             {/* Profile Image */}
-            <img
-              src={profile?.image ? `${backendUrl}/uploads/${profile.image}` : undefined}
-              alt="Profile"
-              className="w-36 h-36 rounded-full absolute -bottom-15 left-10 border-4 border-white object-cover"
-              style={{ zIndex: 1 }}
-            />
-            <Dialog>
+            {profile?.image && (
+              <img
+                src={getImageUrl(profile.image)}
+                alt="Profile"
+                className="w-36 h-36 rounded-full absolute -bottom-15 left-10 border-4 border-white object-cover"
+                style={{ zIndex: 1 }}
+              />
+            )}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Pencil className="text-black absolute -bottom-15 right-10 hover:cursor-pointer" />
+                <Pencil className="text-black absolute -bottom-15 right-10 hover:cursor-pointer" onClick={() => setDialogOpen(true)} />
               </DialogTrigger>
               <DialogContent className="max-w-lg max-h-[100vh] overflow-y-auto">
                 <DialogHeader>
@@ -164,7 +206,7 @@ const Profile = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

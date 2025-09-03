@@ -21,7 +21,7 @@ export const updateProfile = async (req, res) => {
     const bannerImage = req.files?.bannerImage?.[0]?.filename;
     const image = req.files?.image?.[0]?.filename;
 
-    const { name, pronoun, skill, location, about, experience } = req.body;
+    const { name, pronoun, skill, location, about } = req.body;
 
     const updatedProfile = await Profile.findOneAndUpdate(
       { userId: id },
@@ -32,8 +32,7 @@ export const updateProfile = async (req, res) => {
         pronoun,
         skill,
         location,
-        about,
-        experience,
+        about
       },
       { new: true }
     );

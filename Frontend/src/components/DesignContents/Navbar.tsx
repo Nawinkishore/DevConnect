@@ -1,48 +1,48 @@
-import React from 'react'
-import { Input } from '../ui/input'
-import { Bell, House, Network, Send, UsersRound } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import CardNav from '../../components/CardNav'
+import logo from '../../assets/react.svg';
+
 const Navbar = () => {
-    const user = useSelector((state: any) => state.auth.user);
-    return (
-        <div className='h-16 bg-white border-b p-12 flex items-center justify-between '>
-            <div className='flex items-center gap-2 '>
-                <img src="/logo.png" alt="DevConnect Logo" className='h-16' />
-                <Input className='h-10 rounded-2xl' type='search' placeholder='Search' />
-            </div>
-            <div className='flex space-x-6'>
-                <div className='flex flex-col items-center gap-1 hover:cursor-pointer hover:text-blue-500'>
-                    <House  />
-                    <span >Home</span>
-                </div>
-                <div className='flex flex-col items-center gap-1 hover:cursor-pointer  hover:text-blue-500'>
-                    <Network />
-                    <span>My Network</span>
-                </div>
-                <div className='flex flex-col items-center gap-1 hover:cursor-pointer  hover:text-blue-500'>
-                    <UsersRound />
-                    <span>Find Team</span>
-                </div>
-                <div className='flex flex-col items-center gap-1 hover:cursor-pointer  hover:text-blue-500'>
-                    <Send />
-                    <span>Messaging</span>
-                </div>
-                <div className='flex flex-col items-center gap-1 hover:cursor-pointer  hover:text-blue-500'>
-                    <Bell />
-                    <span>Notifications</span>
-                </div>
-            </div>
-            <Link to={`/profile/${user.id}`}>
-            <Avatar  className='hover:cursor-pointer'>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            </Link>
-        </div>
-    )
-}
+  const items = [
+    {
+      label: "Home",
+      bgColor: "#0D0716",
+      textColor: "#fff",
+      links: [
+        { label: "Dashboard", ariaLabel: "About Dashboard", to: "/dashboard" },
+      ]
+    },
+    {
+      label: "Connect", 
+      bgColor: "#170D27",
+      textColor: "#fff",
+      links: [
+        { label: "Connect with People", ariaLabel: "Connect with People", to: "/connect/people" },
+        { label: "Project Case Studies", ariaLabel: "Project Case Studies", to: "/connect/projects" }
+      ]
+    },
+    {
+      label: "Contact",
+      bgColor: "#271E37", 
+      textColor: "#fff",
+      links: [
+        { label: "Message", ariaLabel: "Message us", to: "/contact/message" },
+        { label: "Twitter", ariaLabel: "Twitter", to: "/contact/twitter" },
+        { label: "LinkedIn", ariaLabel: "LinkedIn", to: "/contact/linkedin" }
+      ]
+    }
+  ];
 
-export default Navbar
-
+  return (
+    <CardNav
+      logo={logo}
+      logoAlt="Company Logo"
+      items={items}
+      baseColor="#fff"
+      menuColor="#000"
+      buttonBgColor="#111"
+      buttonTextColor="#fff"
+      ease="power3.out"
+    />
+  );
+};
+export default Navbar;

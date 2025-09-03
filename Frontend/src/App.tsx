@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Main from './pages/main/main'
 import Profile from './pages/pages/Profile'
 import CheckAuth from './pages/pages/CheckAuth'
+import ProtectedRoute from './pages/pages/ProtectedRoute'
 const App = () => {
 
   const user = useSelector((state: any) => state.auth.user);
@@ -17,7 +18,7 @@ const App = () => {
   return (
   
     <div>
-      <ToastContainer position='top-right' autoClose={3000} />
+      <ToastContainer position='top-right' autoClose={2000} />
       <Routes>
         <Route
           path="/auth/sign-in"
@@ -37,7 +38,7 @@ const App = () => {
             </SideContent>
           }
         />
-        <Route path="/" element={<CheckAuth><Main /></CheckAuth>}>
+        <Route path="/" element={<CheckAuth><ProtectedRoute><Main /></ProtectedRoute></CheckAuth>}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile/:id" element={<Profile/>} />
         </Route>

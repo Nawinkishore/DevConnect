@@ -15,7 +15,7 @@ const userProfileSchema = mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        default: ""
     },
     pronoun: {
         type: String,
@@ -30,10 +30,6 @@ const userProfileSchema = mongoose.Schema({
         default: ""
     },
     about: {
-        type: String,
-        default: ""
-    },
-    experience: {
         type: String,
         default: ""
     }

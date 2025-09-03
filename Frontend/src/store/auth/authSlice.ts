@@ -1,8 +1,42 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
-// LOGIN
-export const login = createAsyncThunk(
+interface AuthState {
+  user: { id: string; email: string } | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isLoading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+}
+
+interface LoginResponse {
+  success: boolean;
+  user: { id: string; email: string } | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  message?: string;
+}
+
+interface Credentials {
+  email: string;
+  password: string;
+}
+
+const savedAuth = localStorage.getItem("auth");
+
+const initialState: AuthState = savedAuth
+  ? JSON.parse(savedAuth)
+  : {
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+      isLoading: false,
+      error: null,
+      isAuthenticated: false,
+    };
+
+export const login = createAsyncThunk<LoginResponse, Credentials, { rejectValue: string }>(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
     try {
@@ -17,20 +51,6 @@ export const login = createAsyncThunk(
   }
 );
 
-// Load state from localStorage if available
-const savedAuth = localStorage.getItem("auth");
-
-const initialState = savedAuth
-  ? JSON.parse(savedAuth)
-  : {
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isLoading: false,
-      error: null as string | null,
-      isAuthenticated: false, // ✅ always defined
-    };
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -39,36 +59,34 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
+      state.isAuthenticated = false;
       state.error = null;
-      state.isAuthenticated = false; // ✅ reset
       localStorage.removeItem("auth");
     },
-    // ✅ New reducer for updating accessToken only
-    setAccessToken: (state, action) => {
+    setAccessToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
       state.isAuthenticated = true;
       localStorage.setItem("auth", JSON.stringify(state));
     },
   },
   extraReducers: (builder) => {
-    // LOGIN
     builder.addCase(login.pending, (state) => {
       state.isLoading = true;
       state.error = null;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      state.user = action.payload.user || null;
-      state.accessToken = action.payload.accessToken || null;
-      state.refreshToken = action.payload.refreshToken || null;
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
       state.isLoading = false;
       state.error = null;
-      state.isAuthenticated = true; // ✅ set when login succeeds
+      state.isAuthenticated = true;
       localStorage.setItem("auth", JSON.stringify(state));
     });
     builder.addCase(login.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.payload as string;
-      state.isAuthenticated = false; // ✅ failed login
+      state.error = action.payload || "Login failed";
+      state.isAuthenticated = false;
     });
   },
 });

@@ -29,7 +29,8 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/refresh', refresh);
-app.use('/api/profile', verifyJWT, profileRouter);
+app.use(verifyJWT);
+app.use('/api/profile', profileRouter);
 
 await connect();
 app.listen(PORT, () => {
